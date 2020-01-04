@@ -1,8 +1,8 @@
 angular
 .module('webui.services.configuration',  [])
 .constant('$name', 'Aria2 WebUI')  // name used across the entire UI
-.constant('$titlePattern', 'active: {active} - waiting: {waiting} - stopped: {stopped} — {name}')
-.constant('$pageSize', 11)         // number of downloads shown before pagination kicks in
+.constant('$titlePattern', '{active} | {waiting} | {stopped} | {download_speed} | {upload_speed} — {name}')
+.constant('$pageSize', 10)         // number of downloads shown before pagination kicks in
 .constant('$authconf', {           // default authentication configuration, never fill it in case the webui is hosted in public IP as it can be compromised
   host: location.protocol.startsWith('http') ? location.hostname : 'localhost',
   path: '/jsonrpc',
@@ -34,13 +34,13 @@ angular
 })
 .constant('$starredProps', [   // default list of Quick Access Properties. Can be overridden by making modification through the Global Settings dialog
   // go to Global Settings dialog to see their description
-  'dir', 'conf-path', 'auto-file-renaming', 'max-connection-per-server'
+  'dir', 'max-concurrent-downloads', 'max-connection-per-server', 'max-overall-download-limit', 'max-overall-upload-limit', 'seed-ratio', 'seed-time'
 ])
 .constant('$downloadProps', [ // Similar to starred Quick Access properties but for adding new downloads.
   // go to Advance Download Options when adding a new download to view the list of possible options
-  'header', 'http-user', 'http-passwd', 'pause', 'dir', 'max-connection-per-server'
+  'header', 'pause', 'dir', 'max-connection-per-server'
 ])
-.constant('$globalTimeout', 1000)  // interval to update the individual downloads
+.constant('$globalTimeout', 2000)  // interval to update the individual downloads
 ;
 
 
