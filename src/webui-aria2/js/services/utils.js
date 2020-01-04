@@ -54,6 +54,8 @@ angular.module('webui.services.utils', ['webui.services.configuration'])
       exdate.setDate(exdate.getDate() + 30 * 12);
       var cvalue = escape(JSON.stringify(value)) + "; expires=" + exdate.toUTCString();
       document.cookie = key + "=" + cvalue;
+
+      localStorage.setItem(key, escape(JSON.stringify(value)));
     },
     // gets a value for a key stored in cookies
     getCookie: function(key) {
@@ -65,6 +67,10 @@ angular.module('webui.services.utils', ['webui.services.configuration'])
           return JSON.parse(unescape(cvalue));
         }
       }
+
+      var val = localStorage.getItem(key);
+      if (val)
+        return JSON.parse(unescape(val));
 
       return null;
     },
