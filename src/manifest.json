@@ -1,0 +1,28 @@
+{
+    "manifest_version": 2,
+    "name": "Chrome Aria2",
+    "version": "20.01.05",
+    "permissions": [
+        "<all_urls>",
+        "cookies",
+        "tabs",
+        "downloads"
+    ],
+    "background": {
+        "scripts": [ "background.js" ],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [ "magnet/magnet.cs.js" ],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [ "magnet/magnet.js" ]
+}
