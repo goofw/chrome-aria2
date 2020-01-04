@@ -497,6 +497,7 @@ function(
 					cfile.path = file.path;
 					cfile.length = file.length;
 					cfile.fmtLength = utils.fmtsize(file.length);
+					cfile.progress = (file.completedLength / file.length) * 100 || 0;
 					cfile.relpath = file.path.replace(re_slashes, slash);
 					if (!cfile.relpath) {
 						cfile.relpath = (file.uris && file.uris[0] && file.uris[0].uri) || "Unknown";
@@ -529,6 +530,12 @@ function(
 		ctx.metadata = ctx.name.startsWith("[METADATA]");
 		if (ctx.metadata) {
 			ctx.name = ctx.name.substr(10);
+		}
+
+		if (d.infoHash) {
+			ctx.uri = "magnet:?xt=urn:btih:" + d.infoHash
+		} else {
+			ctx.uri = (d.files && d.files[0] && d.files[0].uris && d.files[0].uris[0] && d.files[0].uris[0].uri) || "Unknown";
 		}
 
 		return ctx;
@@ -646,6 +653,11 @@ function(
 
 		return false;
 	}
+
+	scope.getPeers = function(d) {
+		modals.invoke('getPeers', d.gid, d.numPieces);
+	}
+
 	scope.moveDown = function (d) {
 	    rpc.once('changePosition', [d.gid, 1, 'POS_CUR']);
 	};

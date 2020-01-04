@@ -27,11 +27,11 @@ var parseFiles = function(files, cb) {
 angular
 .module('webui.ctrls.modal', [
   "ui.bootstrap", 'webui.services.deps', 'webui.services.modals', 'webui.services.rpc',
-  'webui.services.configuration'
+  'webui.services.configuration', 'angularBittorrentPeerid'
 ])
 .controller('ModalCtrl', [
-  '$_', '$scope', '$modal', "$modals", '$rpc','$fileSettings', '$downloadProps',
-  function(_, scope, $modal, modals, rpc, fsettings, dprops) {
+  '$_', '$scope', '$modal', "$modals", '$rpc','$fileSettings', '$downloadProps', 'bittorrentPeeridService',
+  function(_, scope, $modal, modals, rpc, fsettings, dprops, bittorrentPeeridService) {
 
   scope.getUris = {
     open: function(cb) {
@@ -264,13 +264,44 @@ angular
     };
   });
 
+  scope.getPeers = {
+    open: function(gid, numPieces) {
+      var self = this;
+      this.peers = [];
+      rpc.subscribe('getPeers', [gid], function(data) {
+        self.peers = data[0].map(peer => ({
+          ip: peer.ip,
+          port: peer.port,
+          downloadSpeed: parseInt(peer.downloadSpeed),
+          uploadSpeed: parseInt(peer.uploadSpeed),
+          progress: Array.from(peer.bitfield).reduce(
+            (acc, val) => acc + parseInt(val, 16).toString(2).replace(/0/g, "").length,
+            0
+          ) / numPieces * 100,
+          peerId: peer.peerId.split("%2D")[1] || peer.peerId,
+          client: bittorrentPeeridService.parseClient(peer.peerId)
+        }));
+      });
+      this.inst = $modal.open({
+        templateUrl: "getPeers.html",
+        scope: scope
+      });
+      this.inst.result.then(function() {
+        delete self.inst;
+      },
+      function() {
+        delete self.inst;
+      });
+    }
+  };
+
   rpc.once('getVersion', [], function(data) {
       scope.miscellaneous = data[0];
   });
 
   _.each([
     'getUris', 'getTorrents', 'getMetalinks', 'selectFiles',
-    'settings', 'connection', 'server_info', 'about'
+    'settings', 'connection', 'server_info', 'about', 'getPeers'
   ], function(name) {
     modals.register(name, function() {
       if (scope[name].inst) {

@@ -52,6 +52,7 @@
   <script src="js/services/deps.js"></script>
   <script src="js/services/base64.js"></script>
   <script src="js/services/utils.js"></script>
+  <script src="js/services/peerid.js"></script>
 
   <script src="js/services/modals.js"></script>
   <script src="js/services/alerts.js"></script>
@@ -513,6 +514,12 @@
                 <span class="fa fa-fw fa-cog"></span>
             </button>
             <button
+                class="btn btn-default hidden-phone"
+                ng-if="download.bittorrent && hasStatus(download, 'active')"
+                ng-click="getPeers(download)">
+                <span class="fa fa-fw fa-list-alt"></span>
+            </button>
+            <button
                 ng-if="hasStatus(download, 'waiting')"
                 class="btn btn-default hidden-phone"
                 ng-click="moveDown(download)">
@@ -537,8 +544,9 @@
                             href="#"><span class="fa fa-fw fa-cog">&nbsp;</span> {{ 'Settings' | translate }}</a>
                     </li>
 
-                    <li ng-show="download.bittorrent && false">
-                        <a href="#"><span class="fa fa-fw fa-list-alt">&nbsp;</span> {{ 'Peers' | translate }}</a>
+                    <li ng-show="download.bittorrent && hasStatus(download, 'active')">
+                        <a ng-click="getPeers(download)"
+                           href="#"><span class="fa fa-fw fa-list-alt">&nbsp;</span> {{ 'Peers' | translate }}</a>
                     </li>
 
                     <li>
@@ -743,6 +751,10 @@
             <span title="{{ 'Download status' | translate }}"><span class="fa fa-fw fa-times">&nbsp;</span> {{ 'Removed' | translate }}</span>
           </li>
 
+          <li class="label label-default">
+            <span title="{{ 'Download URI' | translate }}">{{download.uri}}</span>
+          </li>
+
           <li class="label label-warning">
             <span title="{{ 'Download Size' | translate }}"><span class="fa fa-fw fa-cloud-download">&nbsp;</span> {{download.fmtTotalLength}}</span>
           </li>
@@ -759,6 +771,10 @@
           <!-- {{{ error download statistics -->
           <li class="label label-danger">
             <span title="{{ 'Error ' | translate }}"><span class="fa fa-fw fa-times-circle">&nbsp;</span> {{getErrorStatus(download.errorCode)}}</span>
+          </li>
+
+          <li class="label label-default">
+            <span title="{{ 'Download URI' | translate }}">{{download.uri}}</span>
           </li>
 
           <li class="label label-default">
@@ -804,7 +820,7 @@
           <ul class="download-files hidden-phone download-item">
             <li class="label label-default" ng-repeat="file in download.files" ng-class="{'label-success': file.selected}">
               <a ng-if="hasDirectURL()" ng-click="$event.stopPropagation()" ng-href="{{getDirectURL()}}{{file.relpath | encodeURI}}" target="download">{{file.relpath}} ({{file.fmtLength}})</a>
-              <span ng-if="!hasDirectURL()">{{file.relpath}} ({{file.fmtLength}})</span>
+              <span ng-if="!hasDirectURL()">{{file.relpath}} ({{file.fmtLength}}) ({{file.progress | number: 2}}%)</span>
             </li>
           </ul>
           <div ng-show="hasStatus(download, 'active')" class="download-item hidden-phone">
@@ -1314,6 +1330,37 @@
 </script>
 <!-- }}} -->
 
+<!-- {{{ get peers modal -->
+<script type="text/ng-template" id="getPeers.html">
+  <div class="modal-header">
+    <button class="close" ng-click="$dismiss()">x</button>
+    <h4>{{getPeers.peers.length}} Peers</h4>
+  </div>
+  <div class="modal-body">
+    <ul>
+    <li ng-repeat="peer in getPeers.peers" ng-if="peer.downloadSpeed > 0 || peer.uploadSpeed > 0">
+      <ul class="stats">
+        <li class="label label-default" style="min-width: 50ex;">
+          <span title="{{ peer.peerId }}">{{peer.ip}}:{{peer.port}} {{peer.client}}</span>
+        </li>
+        <li class="label label-default" style="min-width: 15ex;">
+          <span title="{{ 'Progress' | translate }}">{{peer.progress | number: 2}}%</span>
+        </li>
+        <li class="label label-default" style="min-width: 15ex;">
+          <span title="{{ 'Download Speed' | translate }}"><span class="fa fa-fw fa-arrow-circle-o-down">&nbsp;</span>{{peer.downloadSpeed | bspeed}}</span>
+        </li>
+        <li class="label label-default" style="min-width: 15ex;">
+          <span title="{{ 'Upload Speed' | translate }}"><span class="fa fa-fw fa-arrow-circle-o-up">&nbsp;</span>{{peer.uploadSpeed | bspeed}}</span>
+        </li>
+      </ul>
+    </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" ng-click="$dismiss()">{{ 'Close' | translate }}</button>
+  </div>
+</script>
+<!-- }}} -->
 
 </div>
 <!-- }}} -->
