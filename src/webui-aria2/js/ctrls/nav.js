@@ -142,4 +142,12 @@ angular
 	scope.shutDownServer = function () {
 	    rpc.once('shutdown', []);
 	};
+
+    scope.connections = utils.getCookie('aria2confs');
+    scope.currentConnection = utils.getCookie('aria2conf');
+    scope.changeConnection = function (connection) {
+        rpc.newConnection();
+        rpc.configure(connection);
+        scope.currentConnection = connection;
+    };
 }]);

@@ -144,6 +144,21 @@ function(syscall, globalTimeout, alerts, utils, rootScope, uri, authconf, filter
           else
             alerts.addAlert(filter('translate')('Successfully connected to Aria2 through remote RPC, however the connection is still insecure. For complete security try adding an authorization secret token while starting Aria2 (through the flag --rpc-secret)'));
           configurations = [];
+
+          // keeping all connections in cookie
+          var aria2confs = utils.getCookie('aria2confs');
+          if (aria2confs === null)
+            aria2confs = [];
+          var isNewConf = true;
+          for (var i in aria2confs) {
+            if (aria2confs[i].host == currentConf.host &&
+                aria2confs[i].port == currentConf.port &&
+                aria2confs[i].path == currentConf.path)
+                  isNewConf = false;
+          }
+          if (isNewConf)
+              aria2confs.push(JSON.parse(JSON.stringify(currentConf)));
+              utils.setCookie('aria2confs', aria2confs);
         }
 
         utils.setCookie('aria2conf', currentConf);
@@ -203,6 +218,8 @@ function(syscall, globalTimeout, alerts, utils, rootScope, uri, authconf, filter
         timeout = setTimeout(update, 0);
       }
     },
+
+    newConnection: function() { needNewConnection = true },
 
     // get current configuration being used
     getConfiguration: function() { return currentConf },

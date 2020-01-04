@@ -211,6 +211,23 @@
         </li>
       </ul>
 
+      <ul class="nav navbar-nav">
+        <li class="dropdown" dropdown>
+          <a
+            href="#"
+            class="dropdown-toggle" dropdown-toggle>{{ 'Connections' | translate }} <span class="caret"></span></a>
+
+          <ul class="dropdown-menu">
+            <li ng-repeat="connection in connections track by $index">
+              <a
+                ng-click="changeConnection(connection)"
+                href="#"><span ng-class="currentConnection.host == connection.host ? 'fa fa-fw fa-check' : 'fa fa-fw'">&nbsp;</span> {{ connection.host }} {{ ':' }} {{ connection.port }}</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+
       <ul class="nav navbar-nav pull-right" ng-show="false">
         <li class="dropdown" dropdown>
           <a
