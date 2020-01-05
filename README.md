@@ -20,5 +20,5 @@
 - Can not remove aria2 connections
 
 ## What's next?
-- Pack and submit to the Chrome Web Store
+- Pack and submit it to the Chrome Web Store
 - Firefox support
