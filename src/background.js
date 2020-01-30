@@ -1,7 +1,11 @@
+var capture = null;
+chrome.storage.sync.get("ariacapture", function (items) {
+    capture = items.ariacapture
+});
 function webui(callback) {
     var target = chrome.runtime.getURL('webui-aria2/index.html')
-    chrome.tabs.query({}, function(tabs) {
-        for(var i = 0; i < tabs.length; ++i) {
+    chrome.tabs.query({}, function (tabs) {
+        for (var i = 0; i < tabs.length; ++i) {
             var tab = tabs[i];
             if (tab.url && tab.url.startsWith(target)) {
                 chrome.windows.update(tab.windowId, { focused: true })
@@ -10,9 +14,9 @@ function webui(callback) {
                 return;
             }
         }
-        chrome.tabs.create({ url: target }, function(tab) {
+        chrome.tabs.create({ url: target }, function (tab) {
             // ugly hack to wait for webui fully loaded
-            chrome.tabs.onUpdated.addListener(function webuiListener (tabId, changeInfo) {
+            chrome.tabs.onUpdated.addListener(function webuiListener(tabId, changeInfo) {
                 if (tabId == tab.id && /[0-9].+ — Aria2 WebUI/.test(changeInfo.title)) {
                     chrome.tabs.onUpdated.removeListener(webuiListener);
                     callback(tab);
@@ -23,9 +27,9 @@ function webui(callback) {
 }
 
 function aria2Download(downloadItem) {
-    webui(function(tab) {
-        chrome.cookies.getAll({ url: downloadItem.finalUrl }, function(cookies) {
-            cmd = [ downloadItem.finalUrl ]
+    webui(function (tab) {
+        chrome.cookies.getAll({ url: downloadItem.finalUrl }, function (cookies) {
+            cmd = [downloadItem.finalUrl]
 
             // TODO: user-agent
             if (cookies.length > 0)
@@ -43,22 +47,30 @@ function aria2Download(downloadItem) {
 }
 
 if (chrome.downloads.onDeterminingFilename) {
-    chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, suggest) {
-        if (downloadItem.totalBytes < 10 * 1024 * 1024)
+
+    chrome.downloads.onDeterminingFilename.addListener(function (downloadItem, suggest) {
+        if (downloadItem.totalBytes < 10 * 1024 * 1024 || !capture)
             return;
-        chrome.downloads.cancel(downloadItem.id, function() {
+        chrome.downloads.cancel(downloadItem.id, function () {
             chrome.downloads.erase({ id: downloadItem.id })
         });
         aria2Download(downloadItem);
     });
 }
-
-chrome.browserAction.onClicked.addListener(function(tab) {
-    webui(function(tab) {});
+chrome.browserAction.onClicked.addListener(function (tab) {
+    webui(function (tab) { });
 });
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+    for (key in changes) {
+        var storageChange = changes[key];
+        if (key == 'ariacapture') {
+            capture = storageChange.newValue;
+        }
+    }
+})
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'magnet') {
         aria2Download({ finalUrl: request.data })
     }
-});
+})
+
