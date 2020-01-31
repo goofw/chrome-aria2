@@ -1,5 +1,5 @@
 function save_options() {
-    var checkboxcap = document.getElementById('like').checked;
+    var checkboxcap = document.getElementById('capturepref').checked;
     chrome.storage.sync.set({
         ariacapture: checkboxcap
     }, function () {
@@ -19,7 +19,7 @@ function restore_options() {
     chrome.storage.sync.get({
         ariacapture: false
     }, function (items) {
-        document.getElementById('like').checked = items.ariacapture;
+        document.getElementById('capturepref').checked = items.ariacapture;
     });
 }
 document.addEventListener('DOMContentLoaded', restore_options);
