@@ -2,14 +2,22 @@
     "manifest_version": 2,
     "name": "Chrome Aria2",
     "version": "20.01.05",
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true,
+        "chrome_style": true
+    },
     "permissions": [
         "<all_urls>",
         "cookies",
         "tabs",
-        "downloads"
+        "downloads",
+        "storage"
     ],
     "background": {
-        "scripts": [ "background.js" ],
+        "scripts": [
+            "background.js"
+        ],
         "persistent": false
     },
     "browser_action": {
@@ -20,9 +28,13 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": [ "magnet/magnet.cs.js" ],
+            "js": [
+                "magnet/magnet.cs.js"
+            ],
             "run_at": "document_idle"
         }
     ],
-    "web_accessible_resources": [ "magnet/magnet.js" ]
+    "web_accessible_resources": [
+        "magnet/magnet.js"
+    ]
 }
