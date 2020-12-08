@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Chrome Aria2",
-    "version": "20.01.05",
+    "version": "20.12.08",
     "permissions": [
         "<all_urls>",
         "cookies",
@@ -20,9 +20,8 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": [ "magnet/magnet.cs.js" ],
+            "js": [ "magnet.js" ],
             "run_at": "document_idle"
         }
-    ],
-    "web_accessible_resources": [ "magnet/magnet.js" ]
+    ]
 }

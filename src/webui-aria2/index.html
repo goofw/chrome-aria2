@@ -1351,22 +1351,22 @@
 <script type="text/ng-template" id="getPeers.html">
   <div class="modal-header">
     <button class="close" ng-click="$dismiss()">x</button>
-    <h4>{{getPeers.peers.length}} Peers</h4>
+    <h4>{{getPeers.peers.length}} Peers (Only showing those with non-zero download/upload speed)</h4>
   </div>
   <div class="modal-body">
     <ul>
     <li ng-repeat="peer in getPeers.peers" ng-if="peer.downloadSpeed > 0 || peer.uploadSpeed > 0">
       <ul class="stats">
-        <li class="label label-default" style="min-width: 50ex;">
+        <li class="label label-default" style="min-width: 53ex;">
           <span title="{{ peer.peerId }}">{{peer.ip}}:{{peer.port}} {{peer.client}}</span>
         </li>
-        <li class="label label-default" style="min-width: 15ex;">
+        <li class="label label-default" style="min-width: 12ex;">
           <span title="{{ 'Progress' | translate }}">{{peer.progress | number: 2}}%</span>
         </li>
-        <li class="label label-default" style="min-width: 15ex;">
+        <li class="label label-default" style="min-width: 14ex;">
           <span title="{{ 'Download Speed' | translate }}"><span class="fa fa-fw fa-arrow-circle-o-down">&nbsp;</span>{{peer.downloadSpeed | bspeed}}</span>
         </li>
-        <li class="label label-default" style="min-width: 15ex;">
+        <li class="label label-default" style="min-width: 14ex;">
           <span title="{{ 'Upload Speed' | translate }}"><span class="fa fa-fw fa-arrow-circle-o-up">&nbsp;</span>{{peer.uploadSpeed | bspeed}}</span>
         </li>
       </ul>
