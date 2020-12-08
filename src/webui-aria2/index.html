@@ -1351,7 +1351,7 @@
 <script type="text/ng-template" id="getPeers.html">
   <div class="modal-header">
     <button class="close" ng-click="$dismiss()">x</button>
-    <h4>{{getPeers.peers.length}} Peers (Only showing those with non-zero download/upload speed)</h4>
+    <h4 title="Only showing those with non-zero download speed or upload speed">{{getPeers.peers.length}} Peers</h4>
   </div>
   <div class="modal-body">
     <ul>
